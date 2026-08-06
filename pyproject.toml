@@ -1,0 +1,36 @@
+# Project metadata
+[tool.poetry]
+name = "vfs-appointment-bot-fa"
+version = "1.0.0"
+description = "VFS Appointment Bot (Persian fork) - This script automates checking for appointments at VFS Global offices in a specified country. Persian localization maintained by Peyman Pasbani."
+authors = ["Ranjan Mohanty <ranjan@duck.com>", "Peyman Pasbani (Persian fork maintainer)"]
+license = "MIT"
+readme = "README.md"
+keywords = ["vfs", "vfs-bot", "vfs-appointment-bot", "visa-appointment-bot", "persian", "farsi"]
+
+# URLs
+[tool.poetry.urls]
+repository = "https://github.com/peymanpasbani/vfs-appointment-bot-fa"
+homepage = "https://github.com/peymanpasbani/vfs-appointment-bot-fa"
+original-project = "https://github.com/ranjan-mohanty/vfs-appointment-bot"
+
+# Build System
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Dependencies
+[tool.poetry.dependencies]
+python = "^3.9"
+playwright = "^1.43.0"
+playwright-stealth = "^1.0.6"
+twilio = "^9.0.4"
+tqdm = "^4.66.2"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^7.0.0"
+black = "^24.4.2"
+
+#Entry points
+[tool.poetry.scripts]
+vfs-appointment-bot = "vfs_appointment_bot.main:main"

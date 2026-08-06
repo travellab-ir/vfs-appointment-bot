@@ -1,6 +1,5 @@
 name: Auto Unzip & Cleanup
 
-# هر بار که یک فایل zip در ریشه‌ی ریپو push بشه، این workflow اجرا می‌شه
 on:
   push:
     paths:
@@ -13,44 +12,38 @@ jobs:
   unzip-and-clean:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Extract every zip file found
+      - name: Extract archives
         run: |
           set -e
           for zipfile in *.zip; do
             [ -e "$zipfile" ] || continue
-            echo "در حال استخراج: $zipfile"
 
             tmpdir=$(mktemp -d)
             unzip -q "$zipfile" -d "$tmpdir"
 
-            # اگر داخل زیپ فقط یک پوشه‌ی اصلی وجود داشت، محتویاتش رو
-            # مستقیم بیار بیرون تا پوشه‌ی تو در تو ساخته نشه
             entries=("$tmpdir"/*)
+            shopt -s dotglob
             if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
-              shopt -s dotglob
               mv "${entries[0]}"/* .
-              shopt -u dotglob
             else
-              shopt -s dotglob
               mv "$tmpdir"/* .
-              shopt -u dotglob
             fi
+            shopt -u dotglob
 
             rm -rf "$tmpdir"
             rm -f "$zipfile"
           done
 
-      - name: Remove junk folders/files
+      - name: Remove junk files
         run: |
           find . -type d -name "__MACOSX" -exec rm -rf {} + 2>/dev/null || true
           find . -type f -name ".DS_Store" -delete
 
-      - name: Commit and push changes
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -58,6 +51,4 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore: auto-extract zip and cleanup"
             git push
-          else
-            echo "تغییری برای commit وجود نداشت"
           fi

@@ -28,10 +28,12 @@ jobs:
 
             entries=("$tmpdir"/*)
             if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
-              cp -a "${entries[0]}"/. .
+              src="${entries[0]}"
             else
-              cp -a "$tmpdir"/. .
+              src="$tmpdir"
             fi
+
+            rsync -a --exclude='.github' "$src"/ .
 
             rm -rf "$tmpdir"
             rm -f "$zipfile"
